@@ -22,6 +22,7 @@ void get_gps()
 {
     if (GPS_UPDATE == 0) {
     	if(read_gps() == 1 && checksum() == 1) {
+    		Serial.println(gps_info);
     		if(gps_info.startsWith("$FX")) {
 				parse_GPS();
 			}
@@ -39,6 +40,19 @@ void parse_GPS() {
 			part_info.trim();
 			gps_info = gps_info.substring(pos+1, gps_info.length());
 			
+			// switch (part) {
+			// 	case 1:
+			// 	const char *lat = part_info.c_str();
+			// 	current_loc.lat = atol(lat);
+			// 	break;
+			// 	case 2:
+			// 	const char *lng = part_info.c_str();
+			// 	current_loc.lng = atol(lng);
+			// 	break;
+			// 	case 3:
+			// 	current_loc.alt = part_info.toInt();
+			// 	break;
+			// }
 			switch (part) {
 				case 1:
 				current_loc.lat = part_info.toInt();
@@ -56,7 +70,7 @@ void parse_GPS() {
 	while(pos >= 0);
 
 	part = 0;
-	String part_info = "";
+	part_info = "";
 	pos = -1;
 	GPS_UPDATE = 1;
 }
@@ -86,25 +100,6 @@ int read_gps() {
 	}
 	return 0;
 }
-
-// int read_gps() 
-// {
-// 	while (modem.available()) {
-//         int c = modem.read();
-//         if (c != 0x0A) {
-//         	if(isprint(c)) {
-//          	   gps_info += (char)c;
-//         	}
-//         }
-//         else {
-//             return 1;
-//         }
-//         if(gps_info.length() > 50) {
-//         	gps_info = "";
-//         	return 0;
-//         }
-//     }
-// }
 
 int checksum()
 {

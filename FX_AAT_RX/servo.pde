@@ -18,9 +18,7 @@ void move_servo()
 	float home_lng = (float)home_loc.lng/1000000.0;
 	float cur_lat = (float)current_loc.lat/1000000.0;
 	float cur_lng = (float)current_loc.lng/1000000.0;
-    float dist = calc_dist(home_lat, home_lng, cur_lat, cur_lng)/1000;
-    Serial.print("dist ==> ");
-    Serial.println(dist);
+    float dist = calc_dist(home_lat, home_lng, cur_lat, cur_lng);
 	float lat_dist = calc_dist(home_lat, home_lng, cur_lat, home_lng);
 	float lng_dist = calc_dist(home_lat, home_lng, home_lat, cur_lng);
 	move_servo_H(lat_dist, lng_dist);
@@ -37,7 +35,9 @@ void move_servo_V(float dist) {
 		dgree_V = 180 - dgree_V;
 	}
 
-	dgree_V = constrain(dgree_V, 0, 180);
+	dgree_V = constrain(dgree_V, 5, 175);
+    Serial.print("V ==> ");
+    Serial.println(dgree_V);
 	SERVO_V.write(dgree_V);
 }
 
@@ -54,7 +54,9 @@ void move_servo_H(float lat_dist, float lng_dist) {
         dgree_H = 0;
     }
 
-	dgree_H = constrain(dgree_H, 0, 180);    
+	dgree_H = constrain(dgree_H, 0, 180);
+    Serial.print("H ==> ");
+    Serial.println(dgree_H);
 	SERVO_H.write(dgree_H);
 }
 
@@ -114,54 +116,54 @@ float calc_dist(float flat1, float flon1, float flat2, float flon2)
 
 
 void test_servo() {
-    home_loc.lat = 30000000;
-    home_loc.lng = 30000000;
-    home_loc.alt = 3;
+    home_loc.lat = 39904030;
+    home_loc.lng = 116407526;
+    home_loc.alt = 30;
 
-    current_loc.lat = 40000000;
-    current_loc.lng = 40000000;
+    current_loc.lat = 39913154;
+    current_loc.lng = 116407464;
     current_loc.alt = 400;
     Serial.println("Point 1");
     move_servo();
     delay(4000);
-    current_loc.lat = 30000000;
-    current_loc.lng = 40000000;
+    current_loc.lat = 39917242;
+    current_loc.lng = 116412968;
     current_loc.alt = 800;
     Serial.println("Point 2");
     move_servo();
     delay(4000);
-    current_loc.lat = 20000000;
-    current_loc.lng = 40000000;
+    current_loc.lat = 39912216;
+    current_loc.lng = 116426375;
     current_loc.alt = 600;
     Serial.println("Point 3");
     move_servo();
     delay(4000);
-    current_loc.lat = 20000000;
-    current_loc.lng = 30000000;
+    current_loc.lat = 39902336;
+    current_loc.lng = 116429861;
     current_loc.alt = 120;
     Serial.println("Point 4");
     move_servo();
     delay(4000);
-    current_loc.lat = 20000000;
-    current_loc.lng = 20000000;
+    current_loc.lat = 39894643;
+    current_loc.lng = 116427246;
     current_loc.alt = 120;
     Serial.println("Point 5");
     move_servo();
     delay(4000);
-    current_loc.lat = 30000000;
-    current_loc.lng = 20000000;
+    current_loc.lat = 39896530;
+    current_loc.lng = 116406902;
     current_loc.alt = 120;
     Serial.println("Point 6");
     move_servo();
     delay(4000);
-    current_loc.lat = 40000000;
-    current_loc.lng = 20000000;
+    current_loc.lat = 39889610;
+    current_loc.lng = 116396189;
     current_loc.alt = 120;
     Serial.println("Point 7");
     move_servo();
     delay(4000);
-    current_loc.lat = 40000000;
-    current_loc.lng = 30000000;
+    current_loc.lat = 39899645;
+    current_loc.lng = 116388378;
     current_loc.alt = 120;
     Serial.println("Point 8");
     move_servo();

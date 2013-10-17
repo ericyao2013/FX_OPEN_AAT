@@ -67,6 +67,14 @@ void setup()
   init_servo();
   modem.begin();
   get_home();
+  // home_loc.lat = 39904030;
+  // home_loc.lng = 116407526;
+  // home_loc.alt = 30;
+  // current_loc.lat = 39904030;
+  // current_loc.lng = 116407526;
+  // current_loc.alt = 30;
+  // set_home();
+  // HOME_READY = 1;
   delay(1000);
 }
 
@@ -105,6 +113,7 @@ void loop()
   get_gps();
   if(HOME_READY == 1 && GPS_UPDATE == 1) {
     move_servo();
+    GPS_UPDATE = 0;
   }
 
 }

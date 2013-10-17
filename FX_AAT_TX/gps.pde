@@ -16,7 +16,7 @@ int buf_counter = 0;//单个字符计数器
 int gps_ready = 0;//标识可读状态
 int pos = -1;//字符串查找位置
 int part = 0;//gps分段位置
-String part_info;//gps分段数据
+String part_info = "";//gps分段数据
 
 void get_gps() {
 
@@ -68,10 +68,14 @@ void build_MSG() {
 	}
 	MSG += "*";
 	MSG += String(XOR, HEX);
-	Serial.println(MSG);
+	// Serial.println(MSG);
 }
 
 void parse_GPRMC() {
+
+	part = 0;
+	part_info = "";
+	pos = -1;
 	
 	do {
 		pos = gps_info.indexOf(',');
@@ -108,13 +112,13 @@ void parse_GPRMC() {
 		}
 	}
 	while(pos >= 0);
-
-	part = 0;
-	String part_info = "";
-	pos = -1;
 }
 
 void parse_GPGGA() {
+
+	part = 0;
+	part_info = "";
+	pos = -1;
 
 	do {
 		pos = gps_info.indexOf(',');
@@ -151,24 +155,43 @@ void parse_GPGGA() {
 		}
 	}
 	while(pos >= 0);
-
-	part = 0;
-	String part_info = "";
-	pos = -1;
 }
 
 /* 解析经纬度数据 */
 long parse_data(String info)
 {
-	char *brk_loc;
-	int info_len = info.length();
-	char data[info_len];
-	info.toCharArray(data, info_len);
+	info += ".";
 	unsigned long degree = 0;
 	unsigned long minute = 0;
-	degree = strtol (data, &brk_loc, 10) / 100;
-	minute = (((atol(data) % 100) * 10000 + strtol(brk_loc + 1, NULL, 10)) * 10) / 6;
-	return degree * 1000000 + minute;
+	int part = 0;
+	String part_info = "";
+	int pos = -1;
+
+	do {
+		pos = info.indexOf('.');
+
+		if(pos != -1) {
+			part_info = info.substring(0, pos);
+			part_info.trim();
+			info = info.substring(pos+1, info.length());
+
+			switch (part) {
+				case 0:
+				degree = part_info.toInt();
+				minute = (degree%100)*1000000;
+				degree /= 100;
+				break;
+				case 1:
+				const char *m = part_info.c_str();
+				minute += atol(m);
+				break;
+			}
+			part++;
+		}
+	}
+	while(pos >= 0);
+
+	return degree * 1000000 + minute/60;
 }
 
 int read_gps() {
@@ -187,6 +210,8 @@ int read_gps() {
 			gps_info += char(gps_buf);
 			if(gps_buf == '\n' || gps_buf == '\r') {
 				gps_info_len = gps_info.length();
+				Serial.print("gps_info ==> ");
+				Serial.println(gps_info);
 				buf_counter = 0;
 				gps_ready = 0;
 				return 1;

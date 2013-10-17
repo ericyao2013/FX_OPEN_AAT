@@ -38,18 +38,18 @@ static int GPS_UPDATE = 0;
 String MSG;
 
 void setup() {
-  Serial.begin(38400);
+  Serial.begin(38400); 
   Serial.println("!!FX AAT is Ready!!");
   delay(3000);
   modem.begin();
 }
 
 void loop() {
- //  get_gps();
-	// if(GPS_UPDATE == 1) {
-	// 	send_gps();
-	// }
-  send_test();
-  delay(2000);
+  get_gps();
+	if(GPS_UPDATE == 1) {
+		send_gps();
+	}
+  // send_test();
+  // delay(1000);
 }
 

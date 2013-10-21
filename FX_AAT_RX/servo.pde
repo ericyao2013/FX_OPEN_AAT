@@ -9,8 +9,8 @@
 
   ****************************************************/
 
-int dgree_H = 90;
-int dgree_V = 90;
+float dgree_H = 90.0;
+float dgree_V = 90.0;
 
 void move_servo()
 {
@@ -34,11 +34,10 @@ void move_servo_V(float dist) {
 	if(current_loc.lat < home_loc.lat || (dgree_H == 0 && current_loc.lng < home_loc.lng)) {
 		dgree_V = 180 - dgree_V;
 	}
-
-	dgree_V = constrain(dgree_V, 5, 175);
-    Serial.print("V ==> ");
+    Serial.print("dgree_V==>");
     Serial.println(dgree_V);
-	SERVO_V.write(dgree_V);
+
+    move_V(dgree_V);
 }
 
 void move_servo_H(float lat_dist, float lng_dist) {
@@ -53,38 +52,52 @@ void move_servo_H(float lat_dist, float lng_dist) {
 	} else {
         dgree_H = 0;
     }
-
-	dgree_H = constrain(dgree_H, 0, 180);
-    Serial.print("H ==> ");
+    Serial.print("dgree_H==>");
     Serial.println(dgree_H);
-	SERVO_H.write(dgree_H);
+
+    move_H(dgree_H);
+}
+
+void move_H(float dgree) {
+    dgree *= 1000;
+
+    dgree = map(dgree, 0, 180000, MIN_PULSE-SERVO_H_LIMIT+SERVO_H_OFFSET, MAX_PULSE+SERVO_H_LIMIT+SERVO_H_OFFSET);
+    SERVO_H.writeMicroseconds(dgree);
+}
+void move_V(float dgree) {
+    dgree *= 1000;
+
+    dgree = map(dgree, 0, 180000, MIN_PULSE-SERVO_V_LIMIT+SERVO_V_OFFSET, MAX_PULSE+SERVO_V_LIMIT+SERVO_V_OFFSET);
+    SERVO_V.writeMicroseconds(dgree);
 }
 
 void init_servo()
 {
-    SERVO_H.write(90);
-    SERVO_V.write(90);
+    move_H(90);
+    move_V(90);
     delay(500);
     for (int i = 90; i > 0; i--)
     {
-        SERVO_H.write(i);
-        SERVO_V.write(i);
+        move_H(i);
+        move_V(i);
         delay(10);
     }
+    delay(2000);
     for (int i = 0; i < 180; i++)
     {
-        SERVO_H.write(i);
-        SERVO_V.write(i);
+        move_H(i);
+        move_V(i);
         delay(10);
     }
+    delay(2000);
     for (int i = 180; i > 90; i--)
     {
-        SERVO_H.write(i);
-        SERVO_V.write(i);
+        move_H(i);
+        move_V(i);
         delay(10);
     }
-    SERVO_H.write(90);
-    SERVO_V.write(90);
+    move_H(90);
+    move_V(90);
 }
 
 float calc_dist(float flat1, float flon1, float flat2, float flon2)

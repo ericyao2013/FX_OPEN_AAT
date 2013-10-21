@@ -4,15 +4,38 @@
   Copyright (C) 2013  Coeus Rowe
 
   连线方式：
-                             Arduino 5V输出
-                                   |
-                                100k电阻
-                                   |
-  图传接收机音频-----0.22uF电容----|----------------|--------Arduino 6PIN
-                                   |                |
-                                100k电阻        47pF电容
-                                   |                |
-  图传接收机音频地--------------Arduino GND---------|       
+                                  |---------Arduino 5V输出-------|
+                                  |                              |
+                              100k电阻                        4.7k电阻
+                                  |                              |
+  图传接收机音频-----100nF电容----|----------------三极管9014----|----Arduino D6PIN
+                                  |                   |
+                              100k电阻                |
+                                  |                   |
+  图传接收机音频地-------------Arduino GND------------|
+
+
+  Arduino D2PIN----|------按钮开关----Arduino 5V输出
+                10k电阻
+                   |
+                  GND
+
+  Arduino D13PIN----100欧电阻----LED----GND
+
+  Arduino D5PIN----H舵机信号
+  Arduino D9PIN----V舵机信号
+
+  UBEC电源V+ ----- H舵机V+
+               |
+               --- V舵机V+
+               |
+               --- Arduino Vin
+
+  UBEC电源V- ----- H舵机V-
+               |
+               --- V舵机V-
+               |
+               --- Arduino GND
 
   注意：只能使用Arduino的6PIN口输入
 
@@ -26,6 +49,19 @@
 #include "EEPROM.h"
 #include "Servo.h"
 
+/***可调选项***/
+//这部分参数是辉胜MG996R的参数，你可以根据自己的情况调整
+//一定要保证两个舵机的行程刚好是180度，当然可以有些误差
+int MIN_PULSE = 550;//舵机0度
+int MAX_PULSE = 2160;//舵机180度
+//上面两个参数用于控制舵机的总行程
+int SERVO_H_OFFSET = -58;//水平舵机中立点偏移量
+int SERVO_V_OFFSET = -15;//俯仰舵机中立点偏移量
+int SERVO_H_LIMIT = -20;//水平舵机行程补偿
+int SERVO_V_LIMIT = 0;//俯仰舵机行程补偿
+/**************/
+
+
 
 int BUTTON_IRT = 0;//按钮中断，使用外部0，即需要接D2口
 int BUTTON_PIN = 2;
@@ -36,7 +72,6 @@ Servo SERVO_V;//俯仰舵机，对应飞机高度
 
 int BUTTON_PRESS = 0;//按钮是否按下
 int LED_STAT = 1;
-
 
 SoftModem modem;
 

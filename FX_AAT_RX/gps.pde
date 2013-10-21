@@ -79,6 +79,7 @@ int read_gps() {
 
 	while (modem.available() > 0 && buf_counter < 200) {
 		gps_buf = modem.read();
+		Serial.print(gps_buf);
 
 		if(gps_buf == '$') {
 			gps_ready = 1;

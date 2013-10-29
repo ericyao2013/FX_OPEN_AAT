@@ -22,7 +22,7 @@ void get_gps()
 {
     if (GPS_UPDATE == 0) {
     	if(read_gps() == 1 && checksum() == 1) {
-    		Serial.println(gps_info);
+    		// Serial.println(gps_info);
     		if(gps_info.startsWith("$FX")) {
 				parse_GPS();
 			}
@@ -80,7 +80,6 @@ int read_gps() {
 	while (modem.available() > 0 && buf_counter < 200) {
 		gps_buf = modem.read();
 		Serial.print(gps_buf);
-
 		if(gps_buf == '$') {
 			gps_ready = 1;
 			gps_info = "";

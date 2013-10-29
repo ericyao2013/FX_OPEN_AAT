@@ -28,7 +28,7 @@
 //#define SOFT_MODEM_HIGH_FREQ   (7350)
 //#define SOFT_MODEM_RX_BUF_SIZE (32)
 
-#define SOFT_MODEM_DEBUG_ENABLE  (1)
+#define SOFT_MODEM_DEBUG_ENABLE  (0)
 
 class SoftModem : public Stream
 {

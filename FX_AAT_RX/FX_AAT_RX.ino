@@ -45,7 +45,7 @@
 
 ****************************************************/
 
-#include <SoftModem.h>
+#include "SoftModem.h"
 #include "EEPROM.h"
 #include "Servo.h"
 
@@ -102,29 +102,21 @@ void setup()
   init_servo();
   modem.begin();
   get_home();
-  // home_loc.lat = 39904030;
-  // home_loc.lng = 116407526;
-  // home_loc.alt = 30;
-  // current_loc.lat = 39904030;
-  // current_loc.lng = 116407526;
-  // current_loc.alt = 30;
-  // set_home();
-  // HOME_READY = 1;
   delay(1000);
 }
 
 void loop()
 {
 
-  // test_servo();
-
   if(BUTTON_PRESS == 1) {
     //连续按住3秒设置家
     for(int i=0; i<30; i++) {
+      delay(10);
       if(digitalRead(BUTTON_PIN)==LOW) {
         BUTTON_PRESS = 0;
         break;
       }
+      delay(90);
       //设置阶段,LED闪烁
       if(LED_STAT == 1) {
         digitalWrite(LED_PIN, LOW);
@@ -133,18 +125,16 @@ void loop()
         digitalWrite(LED_PIN, HIGH);
       }
       LED_STAT = !LED_STAT;
-      delay(100);
     }
 
     if(BUTTON_PRESS == 1) {
       set_home();
       BUTTON_PRESS = 0;
+      get_home();
     }
-
-    get_home();
-    delay(1000);
+    
   }
-  
+
   get_gps();
   if(HOME_READY == 1 && GPS_UPDATE == 1) {
     move_servo();
